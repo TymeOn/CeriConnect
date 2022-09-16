@@ -1,1 +1,1 @@
-# CeriConnect
+# ConnectCERI
