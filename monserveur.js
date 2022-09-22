@@ -4,6 +4,8 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import fs from 'fs';
 import https from 'https';
+import { User } from './src/models/User.js';
+import { UserDAO } from './src/dao/UserDAO.js'
 
 
 // GENERAL SETUP
@@ -30,6 +32,7 @@ const options = {
     cert: fs.readFileSync('keys/cert.pem')
 };
 
+const userDAO = new UserDAO();
 
 // FRONT ROUTE
 // -----------
@@ -50,6 +53,14 @@ app.post('/login', async(req, res) => {
             console.log('Login with username: ' + req.body.username + ' and password: ' + req.body.password);
             res.redirect('/');
         }
+    } catch (err) {
+        res.status(500).send({errName: err.name, errMessage: err.message});
+    }
+});
+
+app.get('/user-test', async(req, res) => {
+    try {
+        res.send(await userDAO.getAll());
     } catch (err) {
         res.status(500).send({errName: err.name, errMessage: err.message});
     }
