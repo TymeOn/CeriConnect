@@ -4,7 +4,6 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import fs from 'fs';
 import https from 'https';
-import exp from 'constants';
 
 
 // GENERAL SETUP
@@ -22,17 +21,21 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(__dirname + '/public'));
+
+const frontApp = express();
+frontApp.use(express.static(__dirname + '/ConnectCERI/dist/connect-ceri/'))
+
 const options = {
     key: fs.readFileSync('keys/key.pem'),
     cert: fs.readFileSync('keys/cert.pem')
 };
 
 
-// GENERAL ROUTES
-// --------------
+// FRONT ROUTE
+// -----------
 
-app.get('/', async(req, res) => {
-    res.sendFile(__dirname + '/index.html');
+frontApp.get('/', async(req, res) => {
+    res.sendFile(__dirname + '/ConnectCERI/dist/connect-ceri/index.html');
 });
 
 
@@ -55,6 +58,10 @@ app.post('/login', async(req, res) => {
 
 // STARTUP
 // -------
-https.createServer(options, app).listen(process.env.PORT, () => {
-    console.log('ConnectCERI running on port ' + process.env.PORT);
+https.createServer(options, app).listen(process.env.BACK_PORT, () => {
+    console.log('ConnectCERI Back running on port ' + process.env.BACK_PORT);
+});
+
+https.createServer(options, frontApp).listen(process.env.FRONT_PORT, () => {
+    console.log('ConnectCERI Front running on port ' + process.env.FRONT_PORT);
 });
