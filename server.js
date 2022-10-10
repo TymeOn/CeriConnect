@@ -6,12 +6,16 @@ import fs from 'fs';
 import https from 'https';
 import { User } from './src/models/User.js';
 import { UserDAO } from './src/dao/UserDAO.js'
+import { PostDB } from './src/PostDB.js'
+import crypto from 'crypto';
 
 
 // GENERAL SETUP
-// -------------
+// ---------
 
 dotenv.config();
+PostDB.open();
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -34,6 +38,7 @@ const options = {
 
 const userDAO = new UserDAO();
 
+
 // FRONT ROUTE
 // -----------
 
@@ -47,20 +52,21 @@ frontApp.get('/', async(req, res) => {
 
 app.post('/login', async(req, res) => {
     try {
+        console.log(req.body);
         if (!req.body.username || !req.body.password) {
             return res.status(400).json({ message: 'Error. Please enter the correct username and password' })
-        } else {
-            console.log('Login with username: ' + req.body.username + ' and password: ' + req.body.password);
-            res.redirect('/');
         }
-    } catch (err) {
-        res.status(500).send({errName: err.name, errMessage: err.message});
-    }
-});
 
-app.get('/user-test', async(req, res) => {
-    try {
-        res.send(await userDAO.getAll());
+        const hashedPassword = await userDAO.getHashedPassword(req.body.username);
+        if (!hashedPassword) {
+            return res.status(400).json({ message: 'Error. Wrong login or password' });
+        }
+
+        if (crypto.createHash('sha1').update(req.body.password).digest('hex') == hashedPassword) {
+            return res.status(200);
+        } else {
+            return res.status(400).json({ message: 'Error. Wrong login or password' });
+        }
     } catch (err) {
         res.status(500).send({errName: err.name, errMessage: err.message});
     }
@@ -69,6 +75,7 @@ app.get('/user-test', async(req, res) => {
 
 // STARTUP
 // -------
+
 https.createServer(options, app).listen(process.env.BACK_PORT, () => {
     console.log('ConnectCERI Back running on port ' + process.env.BACK_PORT);
 });

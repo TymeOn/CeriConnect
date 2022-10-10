@@ -9,13 +9,13 @@ export class UserDAO {
     async getHashedPassword(username) {
         const client = await UserDB.open();
         const query = {
-            text: 'SELECT password FROM "' + process.env.SCHEMA + '"."utilisateurs" WHERE username=$1',
+            text: 'SELECT pass FROM "' + process.env.PG_SCHEMA + '"."utilisateurs" WHERE identifiant=$1',
             values: [username]
         };
         const result = await client.query(query);
         let data;
         if(result && result.rows && result.rows[0]) {
-            data = result.rows[0].password;
+            data = result.rows[0].pass;
         } else {
             data = null;
         }
@@ -26,7 +26,7 @@ export class UserDAO {
     async getAll() {
         const client = await UserDB.open();
         const query = {
-            text: 'SELECT * FROM "' + process.env.SCHEMA + '"."utilisateurs" ORDER BY id ASC',
+            text: 'SELECT * FROM "' + process.env.PG_SCHEMA + '"."utilisateurs" ORDER BY id ASC',
         };
         const result = await client.query(query);
         let data = [];
@@ -48,6 +48,17 @@ export class UserDAO {
             data = null;
         }
         return data;
+    }
+
+    // add a new author
+    async add() {
+        const client = await UserDB.open();
+        const query = {
+            text: 'INSERT INTO "' + process.env.PG_SCHEMA + '"."utilisateurs"(identifiant, pass, nom, prenom, birthday, status, avatar) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
+            values: ['johnceri', '011493e90bb1523c6f0e708c7fde2963fb84f7d6', 'Smith', 'John', '08/10/2022', 0, 'Avatar'],
+        };
+        const result = await client.query(query);
+        return result;
     }
 
 }
