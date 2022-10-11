@@ -1,0 +1,30 @@
+<div class="card mt-5 p-0 shadow-sm" style="margin: 0 auto; max-width: 55em">
+  <div class="row g-0">
+
+    <div class="col-md-6">
+      <img class="img-fluid rounded-start" style="height: 100%; object-fit: cover;" src="../../../assets/login_picture.png" alt="login_cover"/>
+    </div>
+
+    <div class="col-md-6 p-3">
+      <div class="card-body">
+        <h1 class="card-title mb-4">Connectez-vous</h1>
+        <div>
+          <div class="mb-3">
+            <label for="inputUsername" class="form-label">Identifiant</label>
+            <input [(ngModel)]="username" type="text" name="username" class="form-control" id="inputUsername" maxlength="45">
+          </div>
+          <div class="mb-3">
+            <label for="inputPassword" class="form-label">Mot de passe</label>
+            <input [(ngModel)]="password" type="password" name="password" class="form-control" id="inputPassword" maxlength="45">
+          </div>
+          <button (click)="login()" class="btn btn-primary">Envoyer</button>
+        </div>
+        <div class="text-center mt-5">
+          <span>Pas encore de compte?</span><br/>
+          <a href="" class="card-link">Inscrivez-vous !</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

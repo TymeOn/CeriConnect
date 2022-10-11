@@ -27,6 +27,13 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(__dirname + '/public'));
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    res.header('Access-Control-Allow-Credentials', true);
+    next();
+});
 
 const frontApp = express();
 frontApp.use(express.static(__dirname + '/ConnectCERI/dist/connect-ceri/'))
@@ -52,21 +59,29 @@ frontApp.get('/', async(req, res) => {
 
 app.post('/login', async(req, res) => {
     try {
-        console.log(req.body);
         if (!req.body.username || !req.body.password) {
-            return res.status(400).json({ message: 'Error. Please enter the correct username and password' })
+            return res.status(401).json({ message: 'Erreur. Mauvais identifiant ou mot de passe.' });
         }
 
         const hashedPassword = await userDAO.getHashedPassword(req.body.username);
         if (!hashedPassword) {
-            return res.status(400).json({ message: 'Error. Wrong login or password' });
+            return res.status(401).json({ message: 'Erreur. Mauvais identifiant ou mot de passe.' });
         }
 
         if (crypto.createHash('sha1').update(req.body.password).digest('hex') == hashedPassword) {
-            return res.status(200);
+            return res.status(200).json({});
         } else {
-            return res.status(400).json({ message: 'Error. Wrong login or password' });
+            return res.status(401).json({ message: 'Erreur. Mauvais identifiant ou mot de passe.' });
         }
+    } catch (err) {
+        res.status(500).send({errName: err.name, errMessage: err.message});
+    }
+});
+
+app.get('/test', async(req, res) => {
+    try {
+        console.log('OUI');
+        return res.status(200).json({});
     } catch (err) {
         res.status(500).send({errName: err.name, errMessage: err.message});
     }
