@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { NotifierService } from 'angular-notifier';
+import { AuthService } from "../../services/auth.service";
 
 @Component({
   selector: 'app-login',
@@ -12,17 +11,12 @@ export class LoginComponent implements OnInit {
   username = '';
   password = '';
 
-  constructor(private http: HttpClient, private notifier: NotifierService) { }
+  constructor(private auth: AuthService) { }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   login() {
-    this.http.post('https://localhost:3289/login', {username: this.username, password: this.password})
-      .subscribe((data) => {
-        this.notifier.notify('success', 'Connexion réussie. Redirection...')
-      })
-    ;
+    this.auth.login(this.username, this.password);
   }
 
 }

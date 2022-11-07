@@ -1,1 +1,7 @@
-<p>Dashboard WIP</p>
+<div *ngIf="!auth.getLoggedIn(); else elseBlock">
+  <p>Veuillez vous connecter pour accéder à votre mur.</p>
+</div>
+
+<ng-template #elseBlock>
+  <p>Plein d'infos vraiment cool par exemple.</p>
+</ng-template>

@@ -4,9 +4,16 @@
     <a class="navbar-brand ms-3" [routerLink]="'/'">ConnectCERI</a>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav w-100">
-        <li class="nav-item">
+        <li *ngIf="!auth.getLoggedIn(); else loggedInBlock" class="nav-item">
           <a class="nav-link" [routerLink]="'/login'" [routerLinkActive]="'active'">Connexion</a>
         </li>
+        <ng-template #loggedInBlock>
+          <span class="navbar-text">Bienvenue, {{ auth.getLoggedIn().username }}.</span>
+          <span class="navbar-text">
+            {{ (auth.getLoggedIn().session ? 'Dernière connexion: ' + (auth.getLoggedIn().session.lastLogin | date: 'dd/MM/yyyy HH:mm') : 'Première connexion sur cet appareil.') }}
+          </span>
+          <button class="btn nav-link" (click)="auth.logout()">Déconnexion</button>
+        </ng-template>
       </ul>
     </div>
   </nav>
