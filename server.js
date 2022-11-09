@@ -1,4 +1,6 @@
 import express from 'express';
+import session from 'express-session';
+import MongoStore from 'connect-mongo';
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
@@ -8,6 +10,7 @@ import { User } from './src/models/User.js';
 import { UserDAO } from './src/dao/UserDAO.js'
 import { PostDB } from './src/PostDB.js'
 import crypto from 'crypto';
+import cors from 'cors';
 
 
 // GENERAL SETUP
@@ -24,16 +27,26 @@ const __dirname = dirname(__filename);
 // -------------
 
 const app = express();
+app.use(cors());
+app.options('*', cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(__dirname + '/public'));
-app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-    res.header('Access-Control-Allow-Credentials', true);
-    next();
-});
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    saveUninitialized: false,
+    resave: false,
+    store: new MongoStore({
+        collectionName: 'MySession3289',
+        mongoUrl: 'mongodb://' +
+            process.env.MG_USER + ':' +
+            process.env.MG_PASS + '@' +
+            process.env.MG_HOST + ':' +
+            process.env.MG_PORT + '/' +
+            process.env.MG_NAME,
+        touchAfter: 24 * 3600,
+    })
+}));
 
 const frontApp = express();
 frontApp.use(express.static(__dirname + '/ConnectCERI/dist/connect-ceri/'))
@@ -67,8 +80,11 @@ app.post('/login', async(req, res) => {
         if (!hashedPassword) {
             return res.status(401).json({ message: 'Erreur. Mauvais identifiant ou mot de passe.' });
         }
-
-        if (crypto.createHash('sha1').update(req.body.password).digest('hex') == hashedPassword) {
+        console.log(crypto.createHash('sha1').update(req.body.password).digest('hex'));
+        if (crypto.createHash('sha1').update(req.body.password).digest('hex') === hashedPassword) {
+            req.session.user = req.body.username;
+            req.session.isLogged = true;
+            req.session.lastLogin = new Date();
             return res.status(200).json({});
         } else {
             return res.status(401).json({ message: 'Erreur. Mauvais identifiant ou mot de passe.' });
