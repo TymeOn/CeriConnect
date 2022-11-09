@@ -25,7 +25,7 @@ import { HttpErrorInterceptor } from "./interceptors/http-error.interceptor";
     NgbModule,
     HttpClientModule,
     FormsModule,
-    NotifierModule,
+    NotifierModule.withConfig({ position: { horizontal: { position: 'right' }, vertical: { position: 'top' }}}),
   ],
   providers: [
     {
