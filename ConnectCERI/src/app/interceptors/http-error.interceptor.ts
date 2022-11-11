@@ -13,6 +13,7 @@ export class HttpErrorInterceptor implements HttpInterceptor {
 
   constructor(private notifier: NotifierService) {}
 
+  // in case of an error in any http request, display the error
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     return next.handle(request).pipe(
       catchError((err) => {

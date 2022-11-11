@@ -13,6 +13,7 @@ export class AuthService {
   public login(username: string, password: string) {
     this.http.post('https://localhost:3289/login', {username: username, password: password})
       .subscribe((data) => {
+        // getting the last connection data
         const session = this.getSessionData(username);
         this.setLoggedIn(true, username, session);
 
@@ -31,11 +32,13 @@ export class AuthService {
     this.router.navigate(['/']);
   }
 
+  // check localStorage for the login status
   public getLoggedIn() {
     const sessionStatus = localStorage.getItem('loggedIn');
     return (sessionStatus ? JSON.parse(sessionStatus) : null);
   }
 
+  // set the login status in localStorage
   public setLoggedIn(login: boolean, username = '', session = null) {
     if (login) {
       localStorage.setItem('loggedIn', JSON.stringify({username: username, session: session}));
