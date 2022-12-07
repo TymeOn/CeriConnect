@@ -12,7 +12,7 @@ export class AuthService {
   constructor(private http: HttpClient, private notifier: NotifierService, private router: Router) { }
 
   public login(username: string, password: string) {
-    this.http.post(environment.url, {username: username, password: password})
+    this.http.post(environment.url + 'login', {username: username, password: password})
       .subscribe((data) => {
         // getting the last connection data
         const session = this.getSessionData(username);
