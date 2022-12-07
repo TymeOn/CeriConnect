@@ -6,21 +6,23 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import fs from 'fs';
 import https from 'https';
-import { User } from './src/models/User.js';
 import { UserDAO } from './src/dao/UserDAO.js'
 import { PostDB } from './src/PostDB.js'
 import crypto from 'crypto';
 import cors from 'cors';
+import {PostDAO} from "./src/dao/PostDAO.js";
+import {Post} from "./src/models/Post.js";
 
 
 // GENERAL SETUP
 // ---------
 
 dotenv.config();
-PostDB.open();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+
+const RESSOURCE_NOT_FOUND = "The requested ressource is not available."
 
 
 // EXPRESS SETUP
@@ -57,6 +59,7 @@ const options = {
 };
 
 const userDAO = new UserDAO();
+const postDAO = new PostDAO();
 
 
 // FRONT ROUTE
@@ -94,10 +97,30 @@ app.post('/login', async(req, res) => {
     }
 });
 
-app.get('/test', async(req, res) => {
+app.get('/users', async(req, res) => {
     try {
-        console.log('OUI');
-        return res.status(200).json({});
+        return res.status(200).json(await userDAO.getAll());
+    } catch (err) {
+        res.status(500).send({errName: err.name, errMessage: err.message});
+    }
+});
+
+
+// POST OPERATIONS
+// ---------------
+
+app.get('/posts', async(req, res) => {
+    try {
+        return res.status(200).json(await postDAO.getAll());
+    } catch (err) {
+        res.status(500).send({errName: err.name, errMessage: err.message});
+    }
+});
+
+app.get('/posts/:id', async(req, res) => {
+    try {
+        const data = await postDAO.get(req.params.id);
+        data ? res.send(data) : res.status(404).send(RESSOURCE_NOT_FOUND);
     } catch (err) {
         res.status(500).send({errName: err.name, errMessage: err.message});
     }
