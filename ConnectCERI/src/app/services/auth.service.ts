@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {NotifierService} from "angular-notifier";
 import {Router} from "@angular/router";
+import {environment} from "../../environments/environment";
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +12,7 @@ export class AuthService {
   constructor(private http: HttpClient, private notifier: NotifierService, private router: Router) { }
 
   public login(username: string, password: string) {
-    this.http.post('https://localhost:3289/login', {username: username, password: password})
+    this.http.post(environment.url, {username: username, password: password})
       .subscribe((data) => {
         // getting the last connection data
         const session = this.getSessionData(username);
