@@ -41,8 +41,8 @@ app.use(session({
     store: new MongoStore({
         collectionName: 'MySession3289',
         mongoUrl: 'mongodb://' +
-            process.env.MG_USER + ':' +
-            process.env.MG_PASS + '@' +
+            (process.env.MG_USER ? (process.env.MG_USER + ':') : '') +
+            (process.env.MG_PASS ? (process.env.MG_PASS + '@') : '') +
             process.env.MG_HOST + ':' +
             process.env.MG_PORT + '/' +
             process.env.MG_NAME,
@@ -60,7 +60,7 @@ const options = {
 
 const userDAO = new UserDAO();
 const postDAO = new PostDAO();
-
+PostDB.open();
 
 // FRONT ROUTE
 // -----------
