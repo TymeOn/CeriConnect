@@ -18,9 +18,21 @@ export class PostDAO {
     }
 
     // gets all the posts in the DB
-    async getAll() {
+    async getAll(sortId = 0, filterId = 0) {
+        let sortOptions = [
+            {date: -1, hour: -1},
+            {date: 1, hour: 1},
+            {likes: -1},
+            {likes: 1}
+        ];
+
+        let filterOptions = {};
+        if (filterId.toString() !== '0') {
+            filterOptions = {createdBy: filterId};
+        }
+
         const users = await new UserDAO().getAll();
-        const posts = await this.Post.find().lean();
+        const posts = await this.Post.find(filterOptions).sort(sortOptions[sortId]).lean();
 
         posts.forEach(post => {
             const user = users.filter(u => u.id === post.createdBy);
@@ -56,6 +68,14 @@ export class PostDAO {
     // removes a post
     async remove(postId) {
         return await this.Post.deleteOne({_id: postId});
+    }
+
+    async addLike(postId) {
+        return await this.Post.findOneAndUpdate({_id: postId}, {$inc : {'likes' : 1}}).exec();
+    }
+
+    async removeLike(postId) {
+        return await this.Post.findOneAndUpdate({_id: postId}, {$inc : {'likes' : -1}}).exec();
     }
 
     // adds a new comment

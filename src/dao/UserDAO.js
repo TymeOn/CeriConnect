@@ -29,7 +29,7 @@ export class UserDAO {
     async getAll() {
         const client = await UserDB.open();
         const query = {
-            text: 'SELECT * FROM "' + process.env.PG_SCHEMA + '"."users" ORDER BY id ASC',
+            text: 'SELECT * FROM "' + process.env.PG_SCHEMA + '"."users" ORDER BY UPPER(identifiant) ASC',
         };
         const result = await client.query(query);
         let data = [];

@@ -6,12 +6,10 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import fs from 'fs';
 import https from 'https';
-import { UserDAO } from './src/dao/UserDAO.js'
-import { PostDB } from './src/PostDB.js'
+import { UserDAO } from './src/dao/UserDAO.js';
+import {PostDAO} from "./src/dao/PostDAO.js";
 import crypto from 'crypto';
 import cors from 'cors';
-import {PostDAO} from "./src/dao/PostDAO.js";
-import {Post} from "./src/models/Post.js";
 
 
 // GENERAL SETUP
@@ -117,14 +115,32 @@ app.get('/posts', async(req, res) => {
     }
 });
 
-app.get('/posts/:id', async(req, res) => {
+app.get('/posts/:sortId/:filterId', async(req, res) => {
     try {
-        const data = await postDAO.get(req.params.id);
-        data ? res.send(data) : res.status(404).send(RESSOURCE_NOT_FOUND);
+        return res.status(200).json(await postDAO.getAll(req.params.sortId, req.params.filterId));
     } catch (err) {
         res.status(500).send({errName: err.name, errMessage: err.message});
     }
 });
+
+app.get('/post-like/:id', async(req, res) => {
+    try {
+        await postDAO.addLike(req.params.id);
+        return res.status(200).json();
+    } catch (err) {
+        res.status(500).send({errName: err.name, errMessage: err.message});
+    }
+});
+
+app.get('/post-unlike/:id', async(req, res) => {
+    try {
+        await postDAO.removeLike(req.params.id);
+        return res.status(200).json();
+    } catch (err) {
+        res.status(500).send({errName: err.name, errMessage: err.message});
+    }
+});
+
 
 
 // COMMENT OPERATIONS
