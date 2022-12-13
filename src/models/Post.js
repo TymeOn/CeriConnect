@@ -56,7 +56,8 @@ export class Post {
             },
             likes: Number,
             hashtags: [String],
-            comments: [comment]
+            comments: [comment],
+            shared: Number
         }
     }
 

@@ -91,6 +91,29 @@
         <i class="bi bi-heart"></i>
       </button>
       <span>{{ post.likes }} Likes</span>
+      <button *ngIf="!post.shared" type="button" class="btn btn-sm btn-outline-secondary float-end" (click)="sharePanel.hidden = !sharePanel.hidden">Citer</button>
+    </div>
+
+    <div #sharePanel [hidden]="true" class="card-body">
+      <div class="input-group mb-3">
+        <span class="input-group-text" style="width: 15%;">Message</span>
+        <input #shareBody type="text" class="form-control" placeholder="Votre message">
+      </div>
+      <div class="input-group mb-3">
+        <span class="input-group-text" style="width: 15%;">URL d'image</span>
+        <input #shareUrl type="text" class="form-control" placeholder="http://super-image.jpg">
+      </div>
+      <div class="input-group mb-3">
+        <span class="input-group-text" style="width: 15%;">Titre</span>
+        <input #shareTitle type="text" class="form-control" placeholder="Une super image :)">
+      </div>
+      <div class="input-group mb-3">
+        <span class="input-group-text" style="width: 15%;">Tags</span>
+        <input #shareTags type="text" class="form-control" placeholder="#exemple #exemple2">
+      </div>
+      <button class="btn btn-outline-secondary float-end" type="button" (click)="sharePost(post._id, shareBody.value, shareUrl.value, shareTitle.value, shareTags.value)">
+        <i class="bi bi-chat-left-quote"></i>
+      </button>
     </div>
 
     <!--comments accordion-->

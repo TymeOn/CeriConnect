@@ -141,6 +141,17 @@ app.get('/post-unlike/:id', async(req, res) => {
     }
 });
 
+app.post('/post-share', async(req, res) => {
+    try {
+        if (!req.body.postId || !req.body.userId || !req.body.body) {
+            return res.status(401).json({ message: 'Erreur. Arguments manquants.' });
+        }
+        return res.status(200).json(await postDAO.sharePost(req.body.postId, req.body.userId, req.body.body, req.body.url, req.body.title, req.body.tags));
+    } catch (err) {
+        res.status(500).send({errName: err.name, errMessage: err.message});
+    }
+});
+
 
 
 // COMMENT OPERATIONS

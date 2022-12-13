@@ -74,7 +74,6 @@ export class DashboardComponent implements OnInit {
   }
 
   isValidPost(post: any) {
-    console.log(post);
     return (Object.keys(post).length > 0)
       && (post.hasOwnProperty('date') && dayjs(post.date, 'YYYY-MM-DD', true).isValid())
       && (post.hasOwnProperty('hour') && dayjs(post.hour, 'HH:mm', true).isValid())
@@ -97,14 +96,6 @@ export class DashboardComponent implements OnInit {
     this.http.post(environment.url + 'comments', {postId: postId, userId: this.auth.getLoggedIn().userId, text: commentInput.value}).subscribe((data: any) => {
       if (data.acknowledged) {
         this.getPosts();
-        // commentInput.value = '';
-        //
-        // this.postList.forEach((post: any, i: number) => {
-        //   if (post._id == postId) {
-        //     this.postList[i].comments.push(data.comment);
-        //   }
-        // });
-        // this.postList = this.postList.map((p: any) => Object.assign({}, p));
       }
     });
   }
@@ -137,6 +128,21 @@ export class DashboardComponent implements OnInit {
   onSortOrFilterChanged() {
     this.page = 1;
     this.getPosts();
+  }
+
+  sharePost(postId: number, shareBody: string, shareUrl: string, shareTitle: string, shareTags: string) {
+    let tags = shareTags.split(" ").filter(t => t.charAt(0) === '#');
+
+    this.http.post(environment.url + 'post-share', {
+      postId: postId,
+      userId: this.auth.getLoggedIn().userId,
+      body: shareBody,
+      url: shareUrl,
+      title: shareTitle,
+      tags: tags
+    }).subscribe(() => {
+      this.getPosts();
+    });
   }
 
 }

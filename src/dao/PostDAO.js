@@ -61,25 +61,12 @@ export class PostDAO {
         return posts;
     }
 
-    // gets a specific post in the DB
-    async get(id) {
-        return await this.Post.findById(id);
-    }
-
-    // updates a post
-    async update(post) {
-        return await this.Post.update(post);
-    }
-
-    // removes a post
-    async remove(postId) {
-        return await this.Post.deleteOne({_id: postId});
-    }
-
+    // increments the likes counter of a post
     async addLike(postId) {
         return await this.Post.findOneAndUpdate({_id: postId}, {$inc : {'likes' : 1}}).exec();
     }
 
+    // decrements the likes counter of a post
     async removeLike(postId) {
         return await this.Post.findOneAndUpdate({_id: postId}, {$inc : {'likes' : -1}}).exec();
     }
@@ -94,7 +81,7 @@ export class PostDAO {
         if (post) {
             const today = new Date();
             const date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
-            const hour = today.getHours() + ';' + today.getMinutes();
+            const hour = today.getHours() + ':' + today.getMinutes();
 
             const comment = {
                 text: text,
@@ -109,6 +96,31 @@ export class PostDAO {
             toRtn.acknowledged = updateResult.acknowledged;
         }
         return toRtn;
+    }
+
+    // decrements the likes counter of a post
+    async sharePost(postId, userId, body, url, title, tags) {
+        const today = new Date();
+        const date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
+        const hour = today.getHours() + ':' + today.getMinutes();
+        const lastPost = await this.Post.findOne({_id: {$exists: true}}).sort({ _id: -1 }).limit(1);
+        const newId = lastPost._id + 1;
+        
+        return await this.Post.create({
+            _id: newId,
+            date: date,
+            hour: hour,
+            body: body,
+            createdBy: userId,
+            images: {
+                url: url,
+                title: title,
+            },
+            likes: 0,
+            hashtags: tags,
+            comments: [],
+            shared: postId
+        });
     }
 
 }
