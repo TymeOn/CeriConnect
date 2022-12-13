@@ -13,7 +13,6 @@ export class PostDB {
                     process.env.MG_PORT + '/' +
                     process.env.MG_NAME
                 ;
-                console.log('OUI ', mongoUrl);
                 PostDB.connection = await mongoose.connect(mongoUrl);
                 console.log("Connected to Mongo DB");
             } catch (err) {

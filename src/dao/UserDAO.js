@@ -9,13 +9,16 @@ export class UserDAO {
     async getHashedPassword(username) {
         const client = await UserDB.open();
         const query = {
-            text: 'SELECT motpasse FROM "' + process.env.PG_SCHEMA + '"."users" WHERE identifiant=$1',
+            text: 'SELECT id, motpasse FROM "' + process.env.PG_SCHEMA + '"."users" WHERE identifiant=$1',
             values: [username]
         };
         const result = await client.query(query);
         let data;
         if(result && result.rows && result.rows[0]) {
-            data = result.rows[0].motpasse;
+            data = {
+                id: result.rows[0].id,
+                password: result.rows[0].motpasse
+            };
         } else {
             data = null;
         }

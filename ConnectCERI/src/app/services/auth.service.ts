@@ -13,10 +13,10 @@ export class AuthService {
 
   public login(username: string, password: string) {
     this.http.post(environment.url + 'login', {username: username, password: password})
-      .subscribe((data) => {
+      .subscribe((data: any) => {
         // getting the last connection data
         const session = this.getSessionData(username);
-        this.setLoggedIn(true, username, session);
+        this.setLoggedIn(true, username, data.id, session);
 
         this.setSessionData(username, {lastLogin : new Date()});
 
@@ -40,9 +40,9 @@ export class AuthService {
   }
 
   // set the login status in localStorage
-  public setLoggedIn(login: boolean, username = '', session = null) {
+  public setLoggedIn(login: boolean, username = '', userId = 0, session = null) {
     if (login) {
-      localStorage.setItem('loggedIn', JSON.stringify({username: username, session: session}));
+      localStorage.setItem('loggedIn', JSON.stringify({username: username, userId: userId, session: session}));
     } else {
       localStorage.removeItem('loggedIn');
     }

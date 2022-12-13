@@ -60,7 +60,7 @@ const options = {
 
 const userDAO = new UserDAO();
 const postDAO = new PostDAO();
-PostDB.open();
+
 
 // FRONT ROUTE
 // -----------
@@ -83,12 +83,12 @@ app.post('/login', async(req, res) => {
         if (!hashedPassword) {
             return res.status(401).json({ message: 'Erreur. Mauvais identifiant ou mot de passe.' });
         }
-        console.log(crypto.createHash('sha1').update(req.body.password).digest('hex'));
-        if (crypto.createHash('sha1').update(req.body.password).digest('hex') === hashedPassword) {
+
+        if (crypto.createHash('sha1').update(req.body.password).digest('hex') === hashedPassword.password) {
             req.session.user = req.body.username;
             req.session.isLogged = true;
             req.session.lastLogin = new Date();
-            return res.status(200).json({});
+            return res.status(200).json({id: hashedPassword.id});
         } else {
             return res.status(401).json({ message: 'Erreur. Mauvais identifiant ou mot de passe.' });
         }
@@ -121,6 +121,21 @@ app.get('/posts/:id', async(req, res) => {
     try {
         const data = await postDAO.get(req.params.id);
         data ? res.send(data) : res.status(404).send(RESSOURCE_NOT_FOUND);
+    } catch (err) {
+        res.status(500).send({errName: err.name, errMessage: err.message});
+    }
+});
+
+
+// COMMENT OPERATIONS
+// ------------------
+
+app.post('/comments', async(req, res) => {
+    try {
+        if (!req.body.postId || !req.body.userId || !req.body.text) {
+            return res.status(401).json({ message: 'Erreur. Arguments manquants.' });
+        }
+        return res.status(200).json(await postDAO.addComment(req.body.postId, req.body.userId, req.body.text));
     } catch (err) {
         res.status(500).send({errName: err.name, errMessage: err.message});
     }

@@ -3,5 +3,67 @@
 </div>
 
 <ng-template #elseBlock>
-  <p>//TODO : Afficher la liste des posts.</p>
+
 </ng-template>
+
+<ngb-pagination [collectionSize]="postList.length" [pageSize]="pageSize" [(page)]="page" [directionLinks]="false"></ngb-pagination>
+
+<div *ngFor="let post of postList | slice: (page-1) * pageSize : (page-1) * pageSize + pageSize" class="card mb-4" style="margin-left: 30%; margin-right: 30%">
+
+  <div class="card-header d-inline">
+    <img [src]="post.author.avatar" style="width: 3em; height: 3em; object-fit: cover" class="rounded-circle border border-2 me-2" alt="">
+    <span class="card-text fw-bold my-2 me-1">{{ post.author.firstname }} {{ post.author.lastname }}</span>
+    <span class="text-muted my-2">@{{ post.author.username }}</span>
+    <span class="text-muted float-end my-2" [ngbPopover]="getDate(post.date + ' ' + post.hour)" triggers="mouseenter:mouseleave">
+      {{ getDateFromNow(post.date + ' ' + post.hour) }}
+    </span>
+  </div>
+
+  <div class="card-body">
+    <p class="card-text">{{ post.body }}</p>
+  </div>
+
+  <img *ngIf="post.images" [src]="post.images.url" [title]="post.images.title" alt="">
+
+  <div class="card-body d-inline">
+    <span *ngFor="let hashtag of post.hashtags" class="card-subtitle text-muted">{{ hashtag }} </span>
+  </div>
+
+  <div class="card-footer text-muted">{{ post.likes }} Likes</div>
+
+  <ngb-accordion>
+    <ngb-panel title="Voir les commentaires">
+      <ng-template ngbPanelContent>
+        <div *ngFor="let comment of post.comments" class="row">
+
+          <div *ngIf="isValidComment(comment)">
+            <div>
+              <img [src]="comment.author.avatar" style="width: 3em; height: 3em; object-fit: cover" class="rounded-circle border border-2 me-2" alt="">
+              <span class="card-text fw-bold my-2 me-1">{{ comment.author.firstname }} {{ comment.author.lastname }}</span>
+              <span class="text-muted my-2">@{{ comment.author.username }}</span>
+              <span class="text-muted float-end my-2" [ngbPopover]="getDate(comment.date + ' ' + comment.hour)" triggers="mouseenter:mouseleave">
+                {{ getDateFromNow(comment.date + ' ' + comment.hour) }}
+              </span>
+            </div>
+            <div class="ms-5 mb-3">
+              <p class="card-text ms-2">{{ comment.text }}</p>
+            </div>
+            <hr/>
+          </div>
+        </div>
+
+        <div class="input-group my-2">
+          <input #commentField type="text" class="form-control" placeholder="Votre commentaire">
+          <div class="input-group-append">
+            <button class="btn btn-outline-primary" type="button" (click)="addComment(post._id, commentField)">
+              <i class="bi bi-send"></i>
+            </button>
+          </div>
+        </div>
+
+      </ng-template>
+    </ngb-panel>
+  </ngb-accordion>
+</div>
+
+<ngb-pagination [collectionSize]="postList.length" [pageSize]="pageSize" [(page)]="page" [directionLinks]="false"></ngb-pagination>

@@ -1,7 +1,8 @@
 import dotenv from 'dotenv';
-import mongoose from "mongoose";
+import mongoose, {Schema} from "mongoose";
 import {PostDB} from '../PostDB.js';
 import {Post} from "../models/Post.js";
+import {UserDAO} from "./UserDAO.js";
 
 dotenv.config();
 
@@ -18,18 +19,33 @@ export class PostDAO {
 
     // gets all the posts in the DB
     async getAll() {
-        return await this.Post.find();
+        const users = await new UserDAO().getAll();
+        const posts = await this.Post.find().lean();
+
+        posts.forEach(post => {
+            const user = users.filter(u => u.id === post.createdBy);
+            post.author = user ? user.map(({username, lastname, firstname, avatar, status}) => ({username, lastname, firstname, avatar, status}))[0] : null;
+
+            post.comments.forEach((comment, index) => {
+                if (typeof comment !== 'string' && Object.keys(comment).length > 0) {
+                    const user = users.filter(u => u.id === comment.commentedBy);
+                    comment.author = user ? user.map(({username, lastname, firstname, avatar, status}) => ({
+                        username,
+                        lastname,
+                        firstname,
+                        avatar,
+                        status
+                    }))[0] : null;
+                }
+            });
+        });
+
+        return posts;
     }
 
     // gets a specific post in the DB
     async get(id) {
         return await this.Post.findById(id);
-    }
-
-    // adds a new post
-    async add(post) {
-        const newPost = this.Post(post);
-        return await newPost.save();
     }
 
     // updates a post
@@ -40,6 +56,33 @@ export class PostDAO {
     // removes a post
     async remove(postId) {
         return await this.Post.deleteOne({_id: postId});
+    }
+
+    // adds a new comment
+    async addComment(postId, userId, text) {
+        let toRtn = {
+            acknowledged: false,
+            comment: null
+        };
+        const post = await this.Post.findById(postId);
+        if (post) {
+            const today = new Date();
+            const date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
+            const hour = today.getHours() + ';' + today.getMinutes();
+
+            const comment = {
+                text: text,
+                commentedBy: userId,
+                date: date,
+                hour: hour
+            }
+            post.comments.push(comment);
+            toRtn.comment = comment;
+
+            const updateResult = await this.Post.updateOne({_id: postId}, post);
+            toRtn.acknowledged = updateResult.acknowledged;
+        }
+        return toRtn;
     }
 
 }

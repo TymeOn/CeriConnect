@@ -42,9 +42,10 @@ export class Post {
             commentedBy: Number,
             date: String,
             hour: String
-        });
+        }, { _id : false});
 
         return {
+            _id: Number,
             date: String,
             hour: String,
             body: String,

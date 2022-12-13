@@ -23,6 +23,8 @@
     "@popperjs/core": "^2.10.2",
     "angular-notifier": "^12.0.0",
     "bootstrap": "^5.2.0",
+    "bootstrap-icons": "^1.10.2",
+    "dayjs": "^1.11.7",
     "rxjs": "~7.5.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.11.4"
