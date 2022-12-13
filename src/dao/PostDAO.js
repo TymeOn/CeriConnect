@@ -52,6 +52,12 @@ export class PostDAO {
             });
         });
 
+        posts.forEach(post => {
+            if (post.hasOwnProperty('shared') && post.shared > 0) {
+                post.originalPost = posts.find(p => p._id === post.shared);
+            }
+        });
+
         return posts;
     }
 
