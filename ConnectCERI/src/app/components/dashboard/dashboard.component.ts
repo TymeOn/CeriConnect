@@ -48,6 +48,7 @@ export class DashboardComponent implements OnInit {
     }
   }
 
+  // gets all the posts from the db
   getPosts() {
     this.http.get(environment.url + 'posts/' + this.selectedSort + '/' + this.selectedUser).subscribe((data: any) => {
       const tempPosts: any[] = [];
@@ -60,20 +61,24 @@ export class DashboardComponent implements OnInit {
     });
   }
 
+  // gets all the users from the db
   getUsers() {
     this.http.get(environment.url + 'users').subscribe((data: any) => {
       this.userList = data;
     });
   }
 
+  // gets a date in a correct format
   getDate(value: string) {
     return dayjs(value, "YYYY-MM-DD HH:mm").format('DD/MM/YYYY HH:mm');
   }
 
+  // gets a date in a "from now on" format
   getDateFromNow(value: string) {
     return dayjs(value, "YYYY-MM-DD HH:mm").fromNow();
   }
 
+  // check the validity of a post
   isValidPost(post: any) {
     return (Object.keys(post).length > 0)
       && (post.hasOwnProperty('date') && dayjs(post.date, 'YYYY-MM-DD', true).isValid())
@@ -83,6 +88,7 @@ export class DashboardComponent implements OnInit {
       && (post.hasOwnProperty('likes'));
   }
 
+  // check the validity of a comment
   isValidComment(comment: any) {
     return (typeof comment !== 'string')
       && (Object.keys(comment).length > 0)
@@ -93,6 +99,7 @@ export class DashboardComponent implements OnInit {
       && (comment.hasOwnProperty('author'));
   }
 
+  // adds a nex comment to a post
   addComment(postId: number, commentInput: HTMLInputElement) {
     this.http.post(environment.url + 'comments', {postId: postId, userId: this.auth.getLoggedIn().userId, text: commentInput.value}).subscribe((data: any) => {
       if (data.acknowledged) {
@@ -101,6 +108,7 @@ export class DashboardComponent implements OnInit {
     });
   }
 
+  // like (or un-like) a post
   like(postId: number) {
     if (this.likedPosts.includes(postId)) {
       // if the post was already liked
@@ -118,6 +126,7 @@ export class DashboardComponent implements OnInit {
 
   }
 
+  // get the status of the like button (if liked or not)
   getLikeButtonClass(postId: number) {
     let buttonClass = 'btn-outline-danger';
     if (this.likedPosts.includes(postId)) {
@@ -126,11 +135,13 @@ export class DashboardComponent implements OnInit {
     return buttonClass;
   }
 
+  // resets the page and re-gets all the posts after filter or search
   onSortOrFilterChanged() {
     this.page = 1;
     this.getPosts();
   }
 
+  // create a post share
   sharePost(postId: number, shareBody: string, shareUrl: string, shareTitle: string, shareTags: string) {
     let tags = shareTags.split(" ").filter(t => t.charAt(0) === '#');
 
@@ -142,32 +153,14 @@ export class DashboardComponent implements OnInit {
       title: shareTitle,
       tags: tags
     }).subscribe(() => {
+      this.page = 1;
       this.getPosts();
     });
   }
 
+  // listens on a websocket for the list of all the connected users
   getConnectedUsers(): any {
     return this.socket.fromEvent('connected-users');
-    // return [
-    //   {
-    //     username: 'johnceri',
-    //     avatar: 'https://cdn.discordapp.com/attachments/376393010923175956/1051942653224288286/108291_w1024h1024c1cx1824cy2736cxb3648cyb5472.webp',
-    //     firstname: 'John',
-    //     lastname: 'CERI',
-    //   },
-    //   {
-    //     username: 'johnceri',
-    //     avatar: 'https://cdn.discordapp.com/attachments/376393010923175956/1051942653224288286/108291_w1024h1024c1cx1824cy2736cxb3648cyb5472.webp',
-    //     firstname: 'John',
-    //     lastname: 'CERI',
-    //   },
-    //   {
-    //     username: 'johnceri',
-    //     avatar: 'https://cdn.discordapp.com/attachments/376393010923175956/1051942653224288286/108291_w1024h1024c1cx1824cy2736cxb3648cyb5472.webp',
-    //     firstname: 'John',
-    //     lastname: 'CERI',
-    //   }
-    // ];
   }
 
 }

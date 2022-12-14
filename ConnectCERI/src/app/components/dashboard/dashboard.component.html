@@ -98,6 +98,7 @@
           <button *ngIf="!post.Shared" type="button" class="btn btn-sm btn-outline-secondary float-end" (click)="sharePanel.hidden = !sharePanel.hidden">Citer</button>
         </div>
 
+        <!--share panel-->
         <div #sharePanel [hidden]="true" class="card-body">
           <div class="input-group mb-3">
             <span class="input-group-text" style="width: 15%;">Message</span>
@@ -159,6 +160,7 @@
       </div>
     </div>
 
+  <!--connected users sidebar-->
   <div class="col-md-4 order-1 order-md-2">
     <div class="card m-4">
       <div class="card-header">

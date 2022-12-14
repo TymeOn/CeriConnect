@@ -11,6 +11,7 @@ export class AuthService {
 
   constructor(private http: HttpClient, private notifier: NotifierService, private router: Router) { }
 
+  // try to log in a user
   public login(username: string, password: string) {
     this.http.post(environment.url + 'login', {username: username, password: password})
       .subscribe((data: any) => {
@@ -28,6 +29,7 @@ export class AuthService {
     ;
   }
 
+  // logout the current user
   public logout() {
     this.http.get(environment.url + 'logout/' + this.getLoggedIn().userId).subscribe(() => {
       this.setLoggedIn(false);
@@ -50,12 +52,14 @@ export class AuthService {
     }
   }
 
+  // get the session data in localStorage
   public getSessionData(username: string) {
     const parsedUsername = username.trim().replace(/ /g,'_').toLocaleUpperCase();
     const sessionData = localStorage.getItem('sessionData_' + parsedUsername);
     return (sessionData ? JSON.parse(sessionData) : null);
   }
 
+  // set the session data in localStorage
   public setSessionData(username: string, session: any) {
     const parsedUsername = username.trim().replace(/ /g,'_').toLocaleUpperCase();
     localStorage.setItem(('sessionData_' + parsedUsername), JSON.stringify(session));

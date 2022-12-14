@@ -1,5 +1,6 @@
 <body>
 
+  <!--main navbar-->
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
       <a class="navbar-brand ms-3" [routerLink]="'/'">ConnectCERI</a>
@@ -24,7 +25,10 @@
   </nav>
 
   <div class="container-fluid p-3">
+    <!--outlet for the notifications-->
     <notifier-container></notifier-container>
+
+    <!--main router outlet-->
     <router-outlet></router-outlet>
   </div>
 
