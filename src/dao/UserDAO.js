@@ -53,6 +53,44 @@ export class UserDAO {
         return data;
     }
 
+    // get all the connected users
+    async getConnectedUsers() {
+        const client = await UserDB.open();
+        const query = {
+            text: 'SELECT * FROM "' + process.env.PG_SCHEMA + '"."users" WHERE statut_connexion = 1 ORDER BY UPPER(identifiant) ASC',
+        };
+        const result = await client.query(query);
+        let data = [];
+        if(result && result.rows) {
+            for (const row of result.rows) {
+                const user = new User(
+                    row.id,
+                    row.identifiant,
+                    row.motpasse,
+                    row.nom,
+                    row.prenom,
+                    row.birthday,
+                    row.status,
+                    row.avatar,
+                );
+                data.push(user);
+            }
+        } else {
+            data = null;
+        }
+        return data;
+    }
+
+    // sets the status of a user
+    async setStatus(userId, status = 0) {
+        const client = await UserDB.open();
+        const query = {
+            text: 'UPDATE "' + process.env.PG_SCHEMA + '"."users" SET statut_connexion=$2 WHERE id=$1 RETURNING *',
+            values: [userId, status],
+        }
+        return await client.query(query);
+    }
+
     // add a new author
     async add() {
         const client = await UserDB.open();

@@ -7,17 +7,17 @@
 <ng-template #elseBlock>
 
   <!--top bar-->
-  <div class="row mb-3">
+  <div class="row mb-3 mx-3 mx-md-4">
 
     <!--top pagination-->
-    <ngb-pagination class="col-3" [collectionSize]="postList.length" [pageSize]="pageSize" [(page)]="page" [directionLinks]="false"></ngb-pagination>
+    <ngb-pagination class="col-3 order-1 order-md-1" [collectionSize]="postList.length" [pageSize]="pageSize" [(page)]="page" [directionLinks]="false"></ngb-pagination>
 
-    <div class="col-5"></div>
+    <div class="col-5 order-2 order-md-2"></div>
 
     <!--sort select-->
-    <div class="col-2">
+    <div class="col-2 order-3 order-md-3">
       <label class="form-label">Trier par:</label>
-      <select class="form-select"  [(ngModel)]="selectedSort" (change)="onSortOrFilterChanged()">
+      <select class="form-select" [(ngModel)]="selectedSort" (change)="onSortOrFilterChanged()">
         <option *ngFor="let option of sortOptions" [value]="option.id">
           {{option.name}}
         </option>
@@ -25,7 +25,7 @@
     </div>
 
     <!--filter select-->
-    <div class="col-2">
+    <div class="col-2 order-4 order-md-4">
       <label class="form-label">Filter par:</label>
       <select class="form-select" [(ngModel)]="selectedUser" (change)="onSortOrFilterChanged()">
         <option value="0">-- Tous les utilisateurs --</option>
@@ -37,121 +37,144 @@
 
   </div>
 
-  <!--post list-->
-  <div *ngFor="let post of postList | slice: (page-1) * pageSize : (page-1) * pageSize + pageSize" class="card mb-4" style="margin-left: calc(100% - 75vw); margin-right: calc(100% - 75vw)">
+  <div class="row mx-4">
 
-    <!--post header-->
-    <div class="card-header d-inline">
-      <img [src]="post.author.avatar" style="width: 3em; height: 3em; object-fit: cover" class="rounded-circle border border-2 me-2" alt="">
-      <span class="card-text fw-bold my-2 me-1">{{ post.author.firstname }} {{ post.author.lastname }}</span>
-      <span class="text-muted my-2">@{{ post.author.username }}</span>
-      <span class="text-muted float-end my-2" [ngbPopover]="getDate(post.date + ' ' + post.hour)" triggers="mouseenter:mouseleave">
-        {{ getDateFromNow(post.date + ' ' + post.hour) }}
-      </span>
-    </div>
+    <div class="col-md-8 order-2 order-md-1">
 
-    <!--post body-->
-    <div class="card-body">
-      <p class="card-text">{{ post.body }}</p>
-    </div>
+      <!--post list-->
+      <div *ngFor="let post of postList | slice: (page-1) * pageSize : (page-1) * pageSize + pageSize" class="card m-4">
 
-    <!--post image-->
-    <img *ngIf="post.images" [src]="post.images.url" [title]="post.images.title" alt="">
+        <!--post header-->
+        <div class="card-header d-inline">
+          <img [src]="post.author.avatar" style="width: 3em; height: 3em; object-fit: cover" class="rounded-circle border border-2 me-2" alt="">
+          <span class="card-text fw-bold my-2 me-1">{{ post.author.firstname }} {{ post.author.lastname }}</span>
+          <span class="text-muted my-2">@{{ post.author.username }}</span>
+          <span class="text-muted float-end my-2" [ngbPopover]="getDate(post.date + ' ' + post.hour)" triggers="mouseenter:mouseleave">
+            {{ getDateFromNow(post.date + ' ' + post.hour) }}
+          </span>
+        </div>
 
-    <!--if shared original post-->
-    <div *ngIf="post.shared && post.originalPost" class="card mx-5 mt-4 mb-0">
-      <div class="card-header d-inline p-1">
-        <img [src]="post.originalPost.author.avatar" style="width: 2em; height: 2em; object-fit: cover" class="rounded-circle border border-2 me-2" alt="">
-        <span class="card-text fw-bold my-2 me-1">{{ post.originalPost.author.firstname }} {{ post.originalPost.author.lastname }}</span>
-        <span class="text-muted my-2">@{{ post.originalPost.author.username }}</span>
-        <span class="text-muted float-end my-1" [ngbPopover]="getDate(post.originalPost.date + ' ' + post.originalPost.hour)" triggers="mouseenter:mouseleave">
-          {{ getDateFromNow(post.originalPost.date + ' ' + post.originalPost.hour) }}
-        </span>
-      </div>
-      <div class="card-body p-2">
-        <p class="card-text">{{ post.originalPost.body }}</p>
-      </div>
-      <img *ngIf="post.originalPost.images" [src]="post.originalPost.images.url" [title]="post.originalPost.images.title" alt="">
-      <div class="card-body d-inline">
-        <span *ngFor="let hashtag of post.originalPost.hashtags" class="card-subtitle text-muted">{{ hashtag }} </span>
-      </div>
-      <div class="card-footer text-muted">
-        <span>{{ post.originalPost.likes }} Likes</span>
-      </div>
-    </div>
+        <!--post body-->
+        <div class="card-body">
+          <p class="card-text">{{ post.body }}</p>
+        </div>
 
-    <!--post hashtags-->
-    <div class="card-body d-inline">
-      <span *ngFor="let hashtag of post.hashtags" class="card-subtitle text-muted">{{ hashtag }} </span>
-    </div>
+        <!--post image-->
+        <img *ngIf="post.images" [src]="post.images.url" [title]="post.images.title" alt="">
 
-    <!--post footer-->
-    <div class="card-footer text-muted">
-      <button type="button" class="btn btn-sm me-2" [ngClass]="getLikeButtonClass(post._id)" (click)="like(post._id)">
-        <i class="bi bi-heart"></i>
-      </button>
-      <span>{{ post.likes }} Likes</span>
-      <button *ngIf="!post.shared" type="button" class="btn btn-sm btn-outline-secondary float-end" (click)="sharePanel.hidden = !sharePanel.hidden">Citer</button>
-    </div>
-
-    <div #sharePanel [hidden]="true" class="card-body">
-      <div class="input-group mb-3">
-        <span class="input-group-text" style="width: 15%;">Message</span>
-        <input #shareBody type="text" class="form-control" placeholder="Votre message">
-      </div>
-      <div class="input-group mb-3">
-        <span class="input-group-text" style="width: 15%;">URL d'image</span>
-        <input #shareUrl type="text" class="form-control" placeholder="http://super-image.jpg">
-      </div>
-      <div class="input-group mb-3">
-        <span class="input-group-text" style="width: 15%;">Titre</span>
-        <input #shareTitle type="text" class="form-control" placeholder="Une super image :)">
-      </div>
-      <div class="input-group mb-3">
-        <span class="input-group-text" style="width: 15%;">Tags</span>
-        <input #shareTags type="text" class="form-control" placeholder="#exemple #exemple2">
-      </div>
-      <button class="btn btn-outline-secondary float-end" type="button" (click)="sharePost(post._id, shareBody.value, shareUrl.value, shareTitle.value, shareTags.value)">
-        <i class="bi bi-chat-left-quote"></i>
-      </button>
-    </div>
-
-    <!--comments accordion-->
-    <ngb-accordion>
-      <ngb-panel title="Voir les commentaires">
-        <ng-template ngbPanelContent>
-
-          <!--comments list-->
-          <div *ngFor="let comment of post.comments" class="row">
-            <div *ngIf="isValidComment(comment)">
-              <div>
-                <img [src]="comment.author.avatar" style="width: 3em; height: 3em; object-fit: cover" class="rounded-circle border border-2 me-2" alt="">
-                <span class="card-text fw-bold my-2 me-1">{{ comment.author.firstname }} {{ comment.author.lastname }}</span>
-                <span class="text-muted my-2">@{{ comment.author.username }}</span>
-                <span class="text-muted float-end my-2" [ngbPopover]="getDate(comment.date + ' ' + comment.hour)" triggers="mouseenter:mouseleave">
-                  {{ getDateFromNow(comment.date + ' ' + comment.hour) }}
-                </span>
-              </div>
-              <div class="ms-5 mb-3">
-                <p class="card-text ms-2">{{ comment.text }}</p>
-              </div>
-              <hr/>
-            </div>
+        <!--if shared original post-->
+        <div *ngIf="post.shared && post.originalPost" class="card mx-5 mt-4 mb-0">
+          <div class="card-header d-inline p-1">
+            <img [src]="post.originalPost.author.avatar" style="width: 2em; height: 2em; object-fit: cover" class="rounded-circle border border-2 me-2" alt="">
+            <span class="card-text fw-bold my-2 me-1">{{ post.originalPost.author.firstname }} {{ post.originalPost.author.lastname }}</span>
+            <span class="text-muted my-2">@{{ post.originalPost.author.username }}</span>
+            <span class="text-muted float-end my-1" [ngbPopover]="getDate(post.originalPost.date + ' ' + post.originalPost.hour)" triggers="mouseenter:mouseleave">
+              {{ getDateFromNow(post.originalPost.date + ' ' + post.originalPost.hour) }}
+            </span>
           </div>
-
-          <!--new comment field-->
-          <div class="input-group my-2">
-            <input #commentField type="text" class="form-control" placeholder="Votre commentaire">
-            <div class="input-group-append">
-              <button class="btn btn-outline-primary" type="button" (click)="addComment(post._id, commentField)">
-                <i class="bi bi-send"></i>
-              </button>
-            </div>
+          <div class="card-body p-2">
+            <p class="card-text">{{ post.originalPost.body }}</p>
           </div>
+          <img *ngIf="post.originalPost.images" [src]="post.originalPost.images.url" [title]="post.originalPost.images.title" alt="">
+          <div class="card-body d-inline">
+            <span *ngFor="let hashtag of post.originalPost.hashtags" class="card-subtitle text-muted">{{ hashtag }} </span>
+          </div>
+          <div class="card-footer text-muted">
+            <span>{{ post.originalPost.likes }} Likes</span>
+          </div>
+        </div>
 
-        </ng-template>
-      </ngb-panel>
-    </ngb-accordion>
+        <!--post hashtags-->
+        <div class="card-body d-inline">
+          <span *ngFor="let hashtag of post.hashtags" class="card-subtitle text-muted">{{ hashtag }} </span>
+        </div>
+
+        <!--post footer-->
+        <div class="card-footer text-muted">
+          <button type="button" class="btn btn-sm me-2" [ngClass]="getLikeButtonClass(post._id)" (click)="like(post._id)">
+            <i class="bi bi-heart"></i>
+          </button>
+          <span>{{ post.likes }} Likes</span>
+          <button *ngIf="!post.shared" type="button" class="btn btn-sm btn-outline-secondary float-end" (click)="sharePanel.hidden = !sharePanel.hidden">Citer</button>
+        </div>
+
+        <div #sharePanel [hidden]="true" class="card-body">
+          <div class="input-group mb-3">
+            <span class="input-group-text" style="width: 15%;">Message</span>
+            <input #shareBody type="text" class="form-control" placeholder="Votre message">
+          </div>
+          <div class="input-group mb-3">
+            <span class="input-group-text" style="width: 15%;">URL d'image</span>
+            <input #shareUrl type="text" class="form-control" placeholder="http://super-image.jpg">
+          </div>
+          <div class="input-group mb-3">
+            <span class="input-group-text" style="width: 15%;">Titre</span>
+            <input #shareTitle type="text" class="form-control" placeholder="Une super image :)">
+          </div>
+          <div class="input-group mb-3">
+            <span class="input-group-text" style="width: 15%;">Tags</span>
+            <input #shareTags type="text" class="form-control" placeholder="#exemple #exemple2">
+          </div>
+          <button class="btn btn-outline-secondary float-end" type="button" (click)="sharePost(post._id, shareBody.value, shareUrl.value, shareTitle.value, shareTags.value)">
+            <i class="bi bi-chat-left-quote"></i>
+          </button>
+        </div>
+
+        <!--comments accordion-->
+        <ngb-accordion>
+          <ngb-panel title="Voir les commentaires">
+            <ng-template ngbPanelContent>
+
+              <!--comments list-->
+              <div *ngFor="let comment of post.comments" class="row">
+                <div *ngIf="isValidComment(comment)">
+                  <div>
+                    <img [src]="comment.author.avatar" style="width: 3em; height: 3em; object-fit: cover" class="rounded-circle border border-2 me-2" alt="">
+                    <span class="card-text fw-bold my-2 me-1">{{ comment.author.firstname }} {{ comment.author.lastname }}</span>
+                    <span class="text-muted my-2">@{{ comment.author.username }}</span>
+                    <span class="text-muted float-end my-2" [ngbPopover]="getDate(comment.date + ' ' + comment.hour)" triggers="mouseenter:mouseleave">
+                      {{ getDateFromNow(comment.date + ' ' + comment.hour) }}
+                    </span>
+                  </div>
+                  <div class="ms-5 mb-3">
+                    <p class="card-text ms-2">{{ comment.text }}</p>
+                  </div>
+                  <hr/>
+                </div>
+              </div>
+
+              <!--new comment field-->
+              <div class="input-group my-2">
+                <input #commentField type="text" class="form-control" placeholder="Votre commentaire">
+                <div class="input-group-append">
+                  <button class="btn btn-outline-primary" type="button" (click)="addComment(post._id, commentField)">
+                    <i class="bi bi-send"></i>
+                  </button>
+                </div>
+              </div>
+
+            </ng-template>
+          </ngb-panel>
+        </ngb-accordion>
+      </div>
+    </div>
+
+  <div class="col-md-4 order-1 order-md-2">
+    <div class="card m-4">
+      <div class="card-header">
+        <span class="card-text fw-bold my-2 me-1">Utilisateurs connectés</span>
+      </div>
+      <div class="card-body">
+        <div *ngFor="let user of getConnectedUsers() | async ; let i = index ; let isLast = last" class="d-inline">
+          <img [src]="user.avatar" style="width: 2em; height: 2em; object-fit: cover" class="rounded-circle border border-2 me-2" alt="">
+          <span class="card-text fw-bold my-2 me-1">{{ user.firstname }} {{ user.lastname }}</span>
+          <span class="text-muted my-2">@{{ user.username }}</span>
+          <hr *ngIf="!isLast"/>
+        </div>
+      </div>
+    </div>
+  </div>
+
   </div>
 
   <!--bottom pagination-->

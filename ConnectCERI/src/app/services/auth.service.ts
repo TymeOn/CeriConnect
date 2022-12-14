@@ -29,8 +29,10 @@ export class AuthService {
   }
 
   public logout() {
-    this.setLoggedIn(false);
-    this.router.navigate(['/']);
+    this.http.get(environment.url + 'logout/' + this.getLoggedIn().userId).subscribe(() => {
+      this.setLoggedIn(false);
+      this.router.navigate(['/']).then();
+    });
   }
 
   // check localStorage for the login status

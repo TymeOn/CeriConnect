@@ -9,7 +9,9 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './components/login/login.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
-import { HttpErrorInterceptor } from "./interceptors/http-error.interceptor";
+import { HttpErrorInterceptor } from './interceptors/http-error.interceptor';
+import { SocketIoModule } from 'ngx-socket-io';
+import { environment } from "../environments/environment";
 
 
 
@@ -26,6 +28,7 @@ import { HttpErrorInterceptor } from "./interceptors/http-error.interceptor";
     HttpClientModule,
     FormsModule,
     NotifierModule.withConfig({ position: { horizontal: { position: 'right' }, vertical: { position: 'top' }}}),
+    SocketIoModule.forRoot({ url: environment.url, options: {} })
   ],
   providers: [
     {

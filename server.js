@@ -10,6 +10,7 @@ import { UserDAO } from './src/dao/UserDAO.js';
 import {PostDAO} from "./src/dao/PostDAO.js";
 import crypto from 'crypto';
 import cors from 'cors';
+import {Server} from 'socket.io';
 
 
 // GENERAL SETUP
@@ -21,6 +22,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const RESSOURCE_NOT_FOUND = "The requested ressource is not available."
+
 
 
 // EXPRESS SETUP
@@ -60,6 +62,7 @@ const userDAO = new UserDAO();
 const postDAO = new PostDAO();
 
 
+
 // FRONT ROUTE
 // -----------
 
@@ -83,6 +86,7 @@ app.post('/login', async(req, res) => {
         }
 
         if (crypto.createHash('sha1').update(req.body.password).digest('hex') === hashedPassword.password) {
+            await userDAO.setStatus(hashedPassword.id, 1);
             req.session.user = req.body.username;
             req.session.isLogged = true;
             req.session.lastLogin = new Date();
@@ -90,6 +94,15 @@ app.post('/login', async(req, res) => {
         } else {
             return res.status(401).json({ message: 'Erreur. Mauvais identifiant ou mot de passe.' });
         }
+    } catch (err) {
+        res.status(500).send({errName: err.name, errMessage: err.message});
+    }
+});
+
+app.get('/logout/:userId', async(req, res) => {
+    try {
+        await userDAO.setStatus(req.params.userId, 0);
+        return res.status(200).json();
     } catch (err) {
         res.status(500).send({errName: err.name, errMessage: err.message});
     }
@@ -172,10 +185,15 @@ app.post('/comments', async(req, res) => {
 // STARTUP
 // -------
 
-https.createServer(options, app).listen(process.env.BACK_PORT, () => {
+const backServer = https.createServer(options, app).listen(process.env.BACK_PORT, () => {
     console.log('ConnectCERI Back running on port ' + process.env.BACK_PORT);
+    setInterval(async() => {
+        io.emit('connected-users', await userDAO.getConnectedUsers());
+    }, 5000);
 });
 
 https.createServer(options, frontApp).listen(process.env.FRONT_PORT, () => {
     console.log('ConnectCERI Front running on port ' + process.env.FRONT_PORT);
 });
+
+const io = new Server(backServer, { cors: { origin: '*' } });

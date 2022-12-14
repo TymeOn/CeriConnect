@@ -6,6 +6,7 @@ import * as dayjs from "dayjs";
 import * as customParseFormat from "dayjs/plugin/customParseFormat";
 import * as relativeTime from "dayjs/plugin/relativeTime";
 import 'dayjs/locale/fr';
+import {Socket} from "ngx-socket-io";
 
 @Component({
   selector: 'app-dashboard',
@@ -34,7 +35,7 @@ export class DashboardComponent implements OnInit {
   // filter parameters
   selectedUser = 0;
 
-  constructor(public auth: AuthService, private http: HttpClient) {
+  constructor(public auth: AuthService, private http: HttpClient, private socket: Socket) {
     dayjs.extend(customParseFormat);
     dayjs.extend(relativeTime);
     dayjs.locale('fr');
@@ -143,6 +144,30 @@ export class DashboardComponent implements OnInit {
     }).subscribe(() => {
       this.getPosts();
     });
+  }
+
+  getConnectedUsers(): any {
+    return this.socket.fromEvent('connected-users');
+    // return [
+    //   {
+    //     username: 'johnceri',
+    //     avatar: 'https://cdn.discordapp.com/attachments/376393010923175956/1051942653224288286/108291_w1024h1024c1cx1824cy2736cxb3648cyb5472.webp',
+    //     firstname: 'John',
+    //     lastname: 'CERI',
+    //   },
+    //   {
+    //     username: 'johnceri',
+    //     avatar: 'https://cdn.discordapp.com/attachments/376393010923175956/1051942653224288286/108291_w1024h1024c1cx1824cy2736cxb3648cyb5472.webp',
+    //     firstname: 'John',
+    //     lastname: 'CERI',
+    //   },
+    //   {
+    //     username: 'johnceri',
+    //     avatar: 'https://cdn.discordapp.com/attachments/376393010923175956/1051942653224288286/108291_w1024h1024c1cx1824cy2736cxb3648cyb5472.webp',
+    //     firstname: 'John',
+    //     lastname: 'CERI',
+    //   }
+    // ];
   }
 
 }
