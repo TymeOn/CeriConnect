@@ -63,7 +63,7 @@
         <img *ngIf="post.images" [src]="post.images.url" [title]="post.images.title" alt="">
 
         <!--if shared original post-->
-        <div *ngIf="post.shared && post.originalPost" class="card mx-5 mt-4 mb-0">
+        <div *ngIf="post.Shared && post.originalPost" class="card mx-5 mt-4 mb-0">
           <div class="card-header d-inline p-1">
             <img [src]="post.originalPost.author.avatar" style="width: 2em; height: 2em; object-fit: cover" class="rounded-circle border border-2 me-2" alt="">
             <span class="card-text fw-bold my-2 me-1">{{ post.originalPost.author.firstname }} {{ post.originalPost.author.lastname }}</span>
@@ -95,7 +95,7 @@
             <i class="bi bi-heart"></i>
           </button>
           <span>{{ post.likes }} Likes</span>
-          <button *ngIf="!post.shared" type="button" class="btn btn-sm btn-outline-secondary float-end" (click)="sharePanel.hidden = !sharePanel.hidden">Citer</button>
+          <button *ngIf="!post.Shared" type="button" class="btn btn-sm btn-outline-secondary float-end" (click)="sharePanel.hidden = !sharePanel.hidden">Citer</button>
         </div>
 
         <div #sharePanel [hidden]="true" class="card-body">

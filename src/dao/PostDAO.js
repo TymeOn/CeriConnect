@@ -53,8 +53,8 @@ export class PostDAO {
         });
 
         posts.forEach(post => {
-            if (post.hasOwnProperty('shared') && post.shared > 0) {
-                post.originalPost = posts.find(p => p._id === post.shared);
+            if (post.hasOwnProperty('Shared') && post.Shared > 0) {
+                post.originalPost = posts.find(p => p._id === post.Shared);
             }
         });
 
@@ -80,8 +80,8 @@ export class PostDAO {
         const post = await this.Post.findById(postId);
         if (post) {
             const today = new Date();
-            const date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
-            const hour = today.getHours() + ':' + today.getMinutes();
+            const date = today.getFullYear() + '-' + ('0' + (today.getMonth() + 1)).slice(-2) + '-' + ('0' + today.getDate()).slice(-2);
+            const hour = ('0' + today.getHours()).slice(-2) + ':' + ('0' + today.getMinutes()).slice(-2);
 
             const comment = {
                 text: text,
@@ -101,8 +101,8 @@ export class PostDAO {
     // decrements the likes counter of a post
     async sharePost(postId, userId, body, url, title, tags) {
         const today = new Date();
-        const date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
-        const hour = today.getHours() + ':' + today.getMinutes();
+        const date = today.getFullYear() + '-' + ('0' + (today.getMonth() + 1)).slice(-2) + '-' + ('0' + today.getDate()).slice(-2);
+        const hour = ('0' + today.getHours()).slice(-2) + ':' + ('0' + today.getMinutes()).slice(-2);
         const lastPost = await this.Post.findOne({_id: {$exists: true}}).sort({ _id: -1 }).limit(1);
         const newId = lastPost._id + 1;
         
@@ -119,7 +119,7 @@ export class PostDAO {
             likes: 0,
             hashtags: tags,
             comments: [],
-            shared: postId
+            Shared: postId
         });
     }
 
