@@ -1,0 +1,13 @@
+<div class="card m-4">
+  <div class="card-header">
+    <span class="card-text fw-bold my-2 me-1">Utilisateurs connectés</span>
+  </div>
+  <div class="card-body">
+    <div *ngFor="let user of getConnectedUsers() | async ; let i = index ; let isLast = last" class="d-inline">
+      <img [src]="user.avatar" style="width: 2em; height: 2em; object-fit: cover" class="rounded-circle border border-2 me-2" alt="">
+      <span class="card-text fw-bold my-2 me-1">{{ user.firstname }} {{ user.lastname }}</span>
+      <span class="text-muted my-2">@{{ user.username }}</span>
+      <hr *ngIf="!isLast"/>
+    </div>
+  </div>
+</div>

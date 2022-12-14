@@ -12,6 +12,7 @@ import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { HttpErrorInterceptor } from './interceptors/http-error.interceptor';
 import { SocketIoModule } from 'ngx-socket-io';
 import { environment } from "../environments/environment";
+import { UserlistComponent } from './components/userlist/userlist.component';
 
 
 
@@ -20,6 +21,7 @@ import { environment } from "../environments/environment";
     AppComponent,
     LoginComponent,
     DashboardComponent,
+    UserlistComponent,
   ],
   imports: [
     AppRoutingModule,

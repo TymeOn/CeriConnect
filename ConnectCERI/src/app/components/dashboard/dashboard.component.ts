@@ -6,7 +6,6 @@ import * as dayjs from "dayjs";
 import * as customParseFormat from "dayjs/plugin/customParseFormat";
 import * as relativeTime from "dayjs/plugin/relativeTime";
 import 'dayjs/locale/fr';
-import {Socket} from "ngx-socket-io";
 
 @Component({
   selector: 'app-dashboard',
@@ -35,7 +34,7 @@ export class DashboardComponent implements OnInit {
   // filter parameters
   selectedUser = 0;
 
-  constructor(public auth: AuthService, private http: HttpClient, private socket: Socket) {
+  constructor(public auth: AuthService, private http: HttpClient) {
     dayjs.extend(customParseFormat);
     dayjs.extend(relativeTime);
     dayjs.locale('fr');
@@ -156,11 +155,6 @@ export class DashboardComponent implements OnInit {
       this.page = 1;
       this.getPosts();
     });
-  }
-
-  // listens on a websocket for the list of all the connected users
-  getConnectedUsers(): any {
-    return this.socket.fromEvent('connected-users');
   }
 
 }
