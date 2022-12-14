@@ -9,6 +9,7 @@ import {AuthService} from "./services/auth.service";
 export class AppComponent {
 
   title = 'ConnectCERI';
+  isCollapsed = false;
 
   constructor(public auth: AuthService) {}
 

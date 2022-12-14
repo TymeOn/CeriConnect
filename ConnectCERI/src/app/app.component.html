@@ -1,20 +1,25 @@
 <body>
 
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand ms-3" [routerLink]="'/'">ConnectCERI</a>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav w-100">
-        <li *ngIf="!auth.getLoggedIn(); else loggedInBlock" class="nav-item">
-          <a class="nav-link" [routerLink]="'/login'" [routerLinkActive]="'active'">Connexion</a>
-        </li>
-        <ng-template #loggedInBlock>
-          <span class="navbar-text">Bienvenue, {{ auth.getLoggedIn().username }}.</span>
-          <span class="navbar-text ms-2">
-            {{ (auth.getLoggedIn().session ? 'Dernière connexion: ' + (auth.getLoggedIn().session.lastLogin | date: 'dd/MM/yyyy HH:mm') : 'Première connexion sur cet appareil.') }}
-          </span>
-          <button class="btn nav-link" (click)="auth.logout()">Déconnexion</button>
-        </ng-template>
-      </ul>
+    <div class="container-fluid">
+      <a class="navbar-brand ms-3" [routerLink]="'/'">ConnectCERI</a>
+      <button class="navbar-toggler btn btn-outline-primary" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02"  aria-expanded="false" aria-label="Toggle navigation" (click)="isCollapsed = !isCollapsed" [attr.aria-expanded]="!isCollapsed" aria-controls="navbarTogglerDemo02">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent" [ngbCollapse]="isCollapsed">
+        <ul class="navbar-nav w-100">
+          <li *ngIf="!auth.getLoggedIn(); else loggedInBlock" class="nav-item">
+            <a class="nav-link" [routerLink]="'/login'" [routerLinkActive]="'active'">Connexion</a>
+          </li>
+          <ng-template #loggedInBlock>
+            <span class="navbar-text">Bienvenue, {{ auth.getLoggedIn().username }}.</span>
+            <span class="navbar-text ms-2">
+              {{ (auth.getLoggedIn().session ? 'Dernière connexion: ' + (auth.getLoggedIn().session.lastLogin | date: 'dd/MM/yyyy HH:mm') : 'Première connexion sur cet appareil.') }}
+            </span>
+            <button class="btn nav-link" (click)="auth.logout()">Déconnexion</button>
+          </ng-template>
+        </ul>
+      </div>
     </div>
   </nav>
 
